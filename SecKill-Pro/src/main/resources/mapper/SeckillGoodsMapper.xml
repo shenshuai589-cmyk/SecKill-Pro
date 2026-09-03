@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace必须是Mapper或dao接口的全限定包名-->
+
+<mapper namespace="com.seckillpro.mapper.SeckillGoodsMapper">
+    <!--id必须是Mapper或dao接口内的方法名-->
+    <!--resultType必须是pojo类名-->
+
+    <resultMap id="BaseResultMap" type="com.seckillpro.pojo.SeckillGoods">
+        <id property="id" column="id"/>  <!-- 主键字段使用id-->
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsImg" column="goods_img"/>
+        <result property="goodsDetail" column="goods_detail"/>
+        <result property="originalPrice" column="original_price"/>
+        <result property="seckillPrice" column="seckill_price"/>
+        <result property="stock" column="stock"/>
+        <result property="stockCount" column="stock_count"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!--开启主键回显-->
+    <insert id="insert" parameterType="com.seckillpro.pojo.SeckillGoods" useGeneratedKeys="true" keyProperty="id">
+
+        insert into seckill_goods
+            (goods_name, goods_img, goods_detail, original_price, seckill_price,
+             stock, stock_count, start_time, end_time, status)
+        values
+            (#{goodsName}, #{goodsImg}, #{goodsDetail}, #{originalPrice}, #{seckillPrice},
+             #{stock}, #{stockCount}, #{startTime}, #{endTime}, #{status})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select * from seckill_goods where id = #{id}
+    </select>
+
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select * from seckill_goods
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countList" resultType="int">
+        select count(*) from seckill_goods
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="com.seckillpro.pojo.SeckillGoods">
+        update seckill_goods
+        <set>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsImg != null">goods_img = #{goodsImg},</if>
+            <if test="goodsDetail != null">goods_detail = #{goodsDetail},</if>
+            <if test="originalPrice != null">original_price = #{originalPrice},</if>
+            <if test="seckillPrice != null">seckill_price = #{seckillPrice},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="stockCount != null">stock_count = #{stockCount},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        update seckill_goods
+        set status = #{status}
+        where id = #{id}
+    </update>
+
+    <update id="deductStock">
+        update seckill_goods
+        set stock_count = stock_count  - 1
+        where id = #{id} and stock_count > 0
+    </update>
+
+</mapper>
