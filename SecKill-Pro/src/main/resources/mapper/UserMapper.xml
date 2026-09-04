@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace必须是Mapper或dao接口的全限定包名-->
+
+<mapper namespace="com.seckillpro.mapper.UserMapper">
+    
+    <resultMap id="BaseResultMap" type="com.seckillpro.pojo.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="role" property="role"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <!--id必须是Mapper或dao接口内的方法名-->
+    <!--resultType必须是pojo类名-->
+    <insert id="insert" parameterType="com.seckillpro.pojo.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user(username,password,nickname,role) 
+        values(#{username},#{password},#{nickname},#{role})
+    </insert>
+    
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        select * from user where username=#{username}
+    </select>   
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        select * from user where id=#{id}
+    </select>
+</mapper>
