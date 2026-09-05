@@ -1,5 +1,6 @@
 package com.seckillpro.controller;
 
+import com.seckillpro.annotation.RequireRole;
 import com.seckillpro.dto.PageResult;
 import com.seckillpro.dto.Result;
 import com.seckillpro.pojo.SeckillGoods;
@@ -16,6 +17,7 @@ public class SeckillGoodsController {
     @Autowired
     private SeckillGoodsService seckillGoodsService;
 
+
     // 商品列表
     @GetMapping("/list")
     public Result<PageResult<SeckillGoods>> list(
@@ -31,5 +33,12 @@ public class SeckillGoodsController {
     public Result<SeckillGoods> detail(@PathVariable Long id){
         SeckillGoods goods = seckillGoodsService.getGoodsDetail(id);
         return Result.success(goods);
+    }
+
+    @RequireRole("ADMIN")
+    @PostMapping
+    public Result<Long> create(@RequestBody SeckillGoods goods) {
+        Long id = seckillGoodsService.createGoods(goods);
+        return Result.success(id);
     }
 }

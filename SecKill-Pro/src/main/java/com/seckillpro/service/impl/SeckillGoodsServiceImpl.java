@@ -4,6 +4,9 @@ import com.seckillpro.dto.PageResult;
 import com.seckillpro.mapper.SeckillGoodsMapper;
 import com.seckillpro.pojo.SeckillGoods;
 import com.seckillpro.service.SeckillGoodsService;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,11 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
 
     @Autowired
     private SeckillGoodsMapper seckillGoodsMapper;
+    
+    @Autowired
+    private RedissonClient  redissonClient;
+
+    private static final String STOCK_KEY_PREFIX = "seckill:stock:";
 
     @Override
     public Long createGoods(SeckillGoods goods) {
@@ -21,6 +29,10 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         goods.setStockCount(goods.getStock());
         goods.setStatus(0);
         seckillGoodsMapper.insert(goods);
+
+        RBucket<String> bucket = redissonClient.getBucket(STOCK_KEY_PREFIX + goods.getId(), StringCodec.INSTANCE);
+        bucket.set(String.valueOf(goods.getStock()));
+        //关键新增：商品创建成功后，把库存同步一份到Redis
         return  goods.getId(); //// insert执行后，id会自动回填到goods对象里
     }
 
@@ -29,6 +41,13 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         SeckillGoods goods = seckillGoodsMapper.selectById(id);
         if (goods == null) {
             throw new RuntimeException("商品不存在");
+        }
+        // 关键新增：详情接口的库存展示，优先从Redis读取实时库存
+        RBucket<String> bucket = redissonClient.getBucket(STOCK_KEY_PREFIX + id, StringCodec.INSTANCE);
+
+        String redisStock = bucket.get();
+        if (redisStock != null) {
+            goods.setStockCount(Integer.parseInt(redisStock));
         }
         return goods;
     }
@@ -39,9 +58,11 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
         if (pageNum == null || pageNum < 1) {
             pageNum = 1;
         }
+
         if (pageSize == null || pageSize < 1) {
             pageSize = 10;
         }
+
         int offset = (pageNum - 1) * pageSize;
         List<SeckillGoods> list = seckillGoodsMapper.selectList(status, offset, pageSize);
 
