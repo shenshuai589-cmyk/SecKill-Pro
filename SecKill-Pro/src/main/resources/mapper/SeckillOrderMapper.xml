@@ -28,4 +28,21 @@
     <select id="selectByUserIdAndGoodsId" resultMap="BaseResultMap">
         select * from seckill_order where user_id = #{userId} and goods_id = #{goodsId}
     </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select * from seckill_order
+        where user_id = #{userId}
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByUserId" resultMap="BaseResultMap">
+        select count(*) from seckill_order where user_id = #{userId}
+    </select>
+
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        select * from seckill_order where order_no = #{orderNo}
+    </select>
+
 </mapper>
