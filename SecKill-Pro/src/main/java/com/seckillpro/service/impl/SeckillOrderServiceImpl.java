@@ -1,10 +1,13 @@
 package com.seckillpro.service.impl;
 
+import com.seckillpro.config.RabbitMQConfig;
+import com.seckillpro.dto.SeckillMessage;
 import com.seckillpro.service.SeckillOrderService;
 import jakarta.annotation.PostConstruct;
 import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     private String seckillScript;
 
@@ -45,6 +51,13 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
                         Arrays.asList(stockKey, usersKey),
                         String.valueOf(userId)
                 );
+        int resultCode = result.intValue();
+
+        if(resultCode == 1){
+            SeckillMessage message = new SeckillMessage(userId, goodsId);
+
+            rabbitTemplate.convertAndSend(RabbitMQConfig.SECKILL_ORDER_QUEUE, message);
+        }
         return result.intValue();
     }
 }

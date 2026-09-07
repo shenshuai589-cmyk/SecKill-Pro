@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace必须是Mapper或dao接口的全限定包名-->
+
+<mapper namespace="com.seckillpro.mapper.SeckillOrderMapper">
+    <!--id必须是Mapper或dao接口内的方法名-->
+    <!--resultType必须是pojo类名-->
+
+    <resultMap id="BaseResultMap" type="com.seckillpro.pojo.SeckillOrder">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="seckill_price" property="seckillPrice"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="pay_time" property="payTime"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seckill_order (order_no, user_id, goods_id, goods_name, seckill_price, order_status)
+        values (#{orderNo}, #{userId}, #{goodsId}, #{goodsName}, #{seckillPrice}, #{orderStatus})
+    </insert>
+    
+    <select id="selectByUserIdAndGoodsId" resultMap="BaseResultMap">
+        select * from seckill_order where user_id = #{userId} and goods_id = #{goodsId}
+    </select>
+</mapper>
