@@ -36,7 +36,7 @@
         limit #{offset}, #{pageSize}
     </select>
 
-    <select id="countByUserId" resultMap="BaseResultMap">
+    <select id="countByUserId" resultType="int">
         select count(*) from seckill_order where user_id = #{userId}
     </select>
 

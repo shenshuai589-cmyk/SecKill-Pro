@@ -16,7 +16,7 @@ public interface SeckillOrderMapper {
     // 分页查询某个用户的订单列表
     List<SeckillOrder> selectByUserId(@Param("userId") Long userId,
                                       @Param("offset") Integer offset,
-                                      @Param("limit") Integer pageSize);
+                                      @Param("pageSize") Integer pageSize);
 
 
     // 查询该用户订单总数
