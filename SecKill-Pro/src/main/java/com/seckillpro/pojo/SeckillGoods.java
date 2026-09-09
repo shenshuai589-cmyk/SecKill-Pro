@@ -1,12 +1,16 @@
 package com.seckillpro.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SeckillGoods {
 
     private Long id; //商品编号
@@ -31,4 +35,7 @@ public class SeckillGoods {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime; // 最后一次被修改的时间
+
+    // 当前登录用户是否已参与过本商品的秒杀（仅商品详情接口填充，非数据库字段，不出现在mapper的resultMap里）
+    private Boolean hasParticipated;
 }

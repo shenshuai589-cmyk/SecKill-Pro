@@ -25,6 +25,7 @@ public class SeckillOrderQueryController {
     }
 
 
+    @GetMapping("/{orderNo}")
     public Result<SeckillOrder>  orderDetail(@PathVariable String orderNo) {
         Long userId = UserContext.getUserId();
         SeckillOrder order = seckillOrderQueryService.getOrderDetail(orderNo, userId);

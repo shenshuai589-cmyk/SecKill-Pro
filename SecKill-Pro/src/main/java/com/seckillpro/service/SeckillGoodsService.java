@@ -2,8 +2,8 @@ package com.seckillpro.service;
 
 import com.seckillpro.dto.PageResult;
 import com.seckillpro.pojo.SeckillGoods;
+import com.seckillpro.vo.StockMonitorVO;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Service;
 
 
 public interface SeckillGoodsService {
@@ -13,7 +13,7 @@ public interface SeckillGoodsService {
 
 
     // 查询商品详情
-    SeckillGoods getGoodsDetail(@Param("id") Long id);
+    SeckillGoods getGoodsDetail(@Param("id") Long id, @Param("userId") Long userId);
 
     // 分页查询商品列表
     PageResult<SeckillGoods> getGoodsList(@Param("status") Integer status,
@@ -25,4 +25,8 @@ public interface SeckillGoodsService {
 
     // 下架商品
     void removeGoods(Long id);
+
+    //库存监控
+    StockMonitorVO getStockMonitor(Long goodsId);
+
 }

@@ -2,6 +2,7 @@ package com.seckillpro.service.impl;
 
 import com.seckillpro.dto.LoginDTO;
 import com.seckillpro.dto.RegisterDTO;
+import com.seckillpro.exception.BusinessException;
 import com.seckillpro.mapper.UserMapper;
 import com.seckillpro.pojo.User;
 import com.seckillpro.service.UserServicre;
@@ -25,6 +26,15 @@ public class UserServiceImpl implements UserServicre {
 
     @Override
     public void register(RegisterDTO dto) {
+
+        if (dto.getUsername() ==  null ||dto.getUsername().isBlank()) {
+            throw new BusinessException(400,"用户名不能为空");
+        }
+
+        if (dto.getPassword() ==  null ||dto.getPassword().isBlank()) {
+            throw new BusinessException(400,"密码不能为空");
+        }
+
         //检查用户名是否已经存在
         User existing = userMapper.selectByUsername(dto.getUsername());
         if(existing!=null){
@@ -41,6 +51,12 @@ public class UserServiceImpl implements UserServicre {
 
     @Override
     public LoginVO login(LoginDTO dto) {
+
+        if (dto.getUsername() == null || dto.getUsername().isBlank()
+                || dto.getPassword() == null || dto.getPassword().isBlank()) {
+            throw new BusinessException(400, "用户名和密码不能为空");
+        }
+
         User user = userMapper.selectByUsername(dto.getUsername());
         if(user==null){
             throw new RuntimeException("用户名或密码错误");
